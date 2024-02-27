@@ -4,30 +4,60 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac5a6f1b-acc5-43f3-80c9-7faef7e07e12" name="Changes" comment="" />
+    <list default="true" id="ac5a6f1b-acc5-43f3-80c9-7faef7e07e12" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/toys.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main/View.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main/View.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Utils/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Utils/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Utils/FileUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Utils/FileUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mapping/dtos/ToyDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mapping/dtos/ToyDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mapping/mappers/ToyMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mapping/mappers/ToyMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/Toy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Toy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/ToyType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/ToyType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/ToyStorelmpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/ToyStorelmpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/ToyStorelnt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/ToyStorelnt.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2crRKc4NUSEGJI4WKKiLWmbdUAE" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.View.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "C:/Users/esteb/IdeaProjects/co.edu.cue.jugueterias/src/main/java/org/example/Main.java",
     "vue.rearranger.settings.migration": "true"
@@ -48,22 +78,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1708867652448</updated>
-      <workItem from="1708867653805" duration="9000" />
+      <workItem from="1708867653805" duration="2250000" />
+      <workItem from="1708899524146" duration="5978000" />
+      <workItem from="1709036644987" duration="597000" />
+      <workItem from="1709055957134" duration="742000" />
+      <workItem from="1709064652672" duration="1050000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/Main.java</url>
-          <line>13</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
