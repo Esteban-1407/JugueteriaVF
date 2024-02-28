@@ -6,6 +6,8 @@ import services.ToyStorelmpl;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class View {
     public static void main(String[] args) {
@@ -13,124 +15,141 @@ public class View {
         Scanner scanner = new Scanner(System.in);
 
         // Menú de opciones
-        String menu = "Bienvenido a la tienda de juguetes\n" +
-                "1. Agregar un juguete\n" +
-                "2. Buscar un juguete\n" +
-                "3. Incrementar la cantidad de un juguete\n" +
-                "4. Disminuir la cantidad de un juguete\n" +
-                "5. Mostrar juguetes por encima de cierto precio\n" +
-                "6. Mostrar el total de juguetes\n" +
-                "7. Mostrar el precio total de todos los juguetes\n" +
-                "8. Salir";
+        String menu = "Welcome to the toy store\n" +
+                "1. Add a toy\n" +
+                "2. Search for a toy\n" +
+                "3. Increase the quantity of a toy\n" +
+                "4. Decrease the quantity of a toy\n" +
+                "5. Show toys above a certain price\n" +
+                "6. Show total number of toys\n" +
+                "7. Show total price of all toys\n" +
+                "8. Show toy by type\n" +
+                "9. List of toys\n" +
+                "10. Exit";
 
-        int opcion = 0;
+        int option = 0;
         do {
             System.out.println(menu);
             try {
-                opcion = scanner.nextInt();
-                scanner.nextLine(); // Consumir el salto de línea
+                option = scanner.nextInt();
+                scanner.nextLine();
 
-                switch (opcion) {
+                switch (option) {
                     case 1:
-                        // Agregar un juguete
                         try {
-                            System.out.println("Ingrese el nombre del juguete:");
-                            String nombreJuguete = scanner.nextLine();
-                            System.out.println("Ingrese el tipo del juguete:");
-                            ToyType tipoJuguete = ToyType.getTypeByValue(Integer.parseInt(scanner.next()));
-                            System.out.println("Ingrese la cantidad del juguete:");
-                            int cantidad = scanner.nextInt();
-                            System.out.println("Ingrese el precio del juguete:");
-                            double precio = scanner.nextDouble();
-                            ToyDTO newToy = new ToyDTO(nombreJuguete, tipoJuguete, cantidad, (int) precio);
+                            System.out.println("Enter the toy name:");
+                            String toyName = scanner.nextLine();
+                            System.out.println("Enter the toy type: FEMALE, MALE, or UNISEX");
+                            ToyType toyType = ToyType.getTypeByValue(Integer.parseInt(scanner.next()));
+                            System.out.println("Enter the quantity of the toy:");
+                            int quantity = scanner.nextInt();
+                            System.out.println("Enter the price of the toy:");
+                            double price = scanner.nextDouble();
+                            ToyDTO newToy = new ToyDTO(toyName, toyType, quantity, (int) price);
                             toyStore.addToy(newToy);
-                            System.out.println("Juguete agregado exitosamente.");
+                            System.out.println("Toy added successfully.");
                         } catch (Exception e) {
-                            System.out.println("Error al agregar un juguete: " + e.getMessage());
+                            System.out.println("Error adding a toy: " + e.getMessage());
                         }
                         break;
                     case 2:
-
                         try {
-                            System.out.println("Ingrese el nombre del juguete a buscar:");
-                            String nombreBuscar = scanner.nextLine();
-                            ToyDTO toy = toyStore.search(nombreBuscar);
-                            System.out.println("Juguete encontrado: " + toy);
+                            System.out.println("Enter the name of the toy to search:");
+                            String searchName = scanner.nextLine();
+                            ToyDTO toy = toyStore.search(searchName);
+                            System.out.println("Toy found: " + toy);
                         } catch (Exception e) {
-                            System.out.println("Error al buscar el juguete: " + e.getMessage());
+                            System.out.println("Error searching for the toy: " + e.getMessage());
                         }
                         break;
                     case 3:
                         try {
-                            System.out.println("Ingrese el nombre del juguete:");
-                            String nombreJugueteIncrementar = scanner.nextLine();
-                            System.out.println("Ingrese la cantidad para incrementar:");
-                            int cantidadIncrementar = scanner.nextInt();
-                            ToyDTO toyToIncrease = new ToyDTO(nombreJugueteIncrementar, null, 0, 0);
-                            toyStore.increase(toyToIncrease, cantidadIncrementar);
-                            System.out.println("Cantidad del juguete incrementada exitosamente.");
-                        }
-                        catch (NumberFormatException e) {
-                            System.out.println("Error: El formato de la cantidad no es válido.");
-                        }
-                        catch (Exception e) {
-                            System.out.println("Error al incrementar la cantidad del juguete: " + e.getMessage());
+                            System.out.println("Enter the name of the toy:");
+                            String toyNameToIncrease = scanner.nextLine();
+                            System.out.println("Enter the quantity to increase:");
+                            int quantityToIncrease = scanner.nextInt();
+                            ToyDTO toyToIncrease = new ToyDTO(toyNameToIncrease, null, 0, 0);
+                            toyStore.increase(toyToIncrease, quantityToIncrease);
+                            System.out.println("Quantity of the toy increased successfully.");
+                        } catch (NumberFormatException e) {
+                            System.out.println("Error: Invalid quantity format.");
+                        } catch (Exception e) {
+                            System.out.println("Error increasing the quantity of the toy: " + e.getMessage());
                         }
                         break;
                     case 4:
                         try {
-                            System.out.println("Ingrese el nombre del juguete:");
-                            String nombreJugueteDisminuir = scanner.nextLine();
-                            System.out.println("Ingrese la cantidad para disminuir:");
-                            int cantidadDisminuir = scanner.nextInt();
-                            ToyDTO toyToDecrease = new ToyDTO(nombreJugueteDisminuir, null, 0, 0);
-                            toyStore.decrease(toyToDecrease, cantidadDisminuir);
-                            System.out.println("Cantidad del juguete disminuida exitosamente.");
-                        }catch (NumberFormatException e) {
-                            System.out.println("Error: El formato de la cantidad no es válido.");
-                        }
-                        catch (Exception e) {
-                            System.out.println("Error al disminuir la cantidad del juguete: " + e.getMessage());
+                            System.out.println("Enter the name of the toy:");
+                            String toyNameToDecrease = scanner.nextLine();
+                            System.out.println("Enter the quantity to decrease:");
+                            int quantityToDecrease = scanner.nextInt();
+                            ToyDTO toyToDecrease = new ToyDTO(toyNameToDecrease, null, 0, 0);
+                            toyStore.decrease(toyToDecrease, quantityToDecrease);
+                            System.out.println("Quantity of the toy decreased successfully.");
+                        } catch (NumberFormatException e) {
+                            System.out.println("Error: Invalid quantity format.");
+                        } catch (Exception e) {
+                            System.out.println("Error decreasing the quantity of the toy: " + e.getMessage());
                         }
                         break;
                     case 5:
                         try {
-                            System.out.println("Ingrese el precio mínimo:");
-                            double precioMinimo = scanner.nextDouble();
-                            scanner.nextLine(); // Consumir el salto de línea
-                            System.out.println("Juguetes por encima de " + precioMinimo + ":\n");
-                            for (ToyDTO toy : toyStore.showToysAbove(precioMinimo)) {
+                            System.out.println("Enter the minimum price:");
+                            double minPrice = scanner.nextDouble();
+                            scanner.nextLine();
+                            System.out.println("Toys above " + minPrice + ":\n");
+                            for (ToyDTO toy : toyStore.showToysAbove(minPrice)) {
                                 System.out.println(toy);
                             }
-                        }catch (NumberFormatException e) {
-                            System.out.println("Error: El formato del precio no es válido.");
+                        } catch (NumberFormatException e) {
+                            System.out.println("Error: Invalid price format.");
+                        } catch (Exception e) {
+                            System.out.println("Error showing toys above a certain price: " + e.getMessage());
                         }
-                        catch (Exception e) {
-                            System.out.println("Error al mostrar juguetes por encima de cierto precio: " + e.getMessage());
+                        break;
+                    case 6: {
+                        CompletableFuture<Integer> futureTotalToys = CompletableFuture.supplyAsync(() -> toyStore.totalToys());
+                        futureTotalToys.thenAccept(totalToys -> {
+                            System.out.println("Total toys in the store: " + totalToys);
+                        });
+
+                        try {
+                            futureTotalToys.get(5, TimeUnit.SECONDS);
+                        } catch (Exception e) {
+                            System.out.println("Execution has exceeded the allowed time.");
                         }
                         break;
-                    case 6:
+                    }
+                    case 7: {
+                        CompletableFuture<Integer> futureTotalPrice = CompletableFuture.supplyAsync(() -> toyStore.totalPriceAllToys());
+                        futureTotalPrice.thenAccept(totalPrice -> {
+                            System.out.println("Total price of all toys: " + totalPrice);
+                        });
 
-                        int totalJuguetes = toyStore.totalToys();
-                        System.out.println("Total de juguetes en la tienda: " + totalJuguetes);
+                        try {
+                            futureTotalPrice.get(5, TimeUnit.SECONDS);
+                        } catch (Exception e) {
+                            System.out.println("Execution has exceeded the allowed time.");
+                        }
                         break;
-                    case 7:
-
-                        int precioTotal = toyStore.totalPriceAllToys();
-                        System.out.println("Precio total de todos los juguetes: " + precioTotal);
-                        break;
+                    }
                     case 8:
-                        System.out.println("Gracias por visitar la tienda de juguetes. ¡Hasta luego!");
+                        // Implement showing toy by type
+                        break;
+                    case 9:
+                        // Implement listing of toys
+                        break;
+                    case 10:
+                        System.out.println("Thank you for visiting the toy store. Goodbye!");
                         break;
                     default:
-                        System.out.println("Opción no válida. Por favor, ingrese un número del 1 al 8.");
+                        System.out.println("Invalid option. Please enter a number from 1 to 10.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Error: Por favor, ingrese un número.");
+                System.out.println("Error: Please enter a number.");
                 scanner.nextLine();
             }
-        } while (opcion != 8);
-
+        } while (option != 10);
 
         scanner.close();
     }
