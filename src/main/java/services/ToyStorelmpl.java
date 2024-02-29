@@ -2,6 +2,7 @@ package services;
 
 import Utils.Constants;
 import Utils.FileUtils;
+import customExceptions.ToyStoreException;
 import mapping.dtos.ToyDTO;
 import mapping.mappers.ToyMapper;
 import model.ToyType;
@@ -39,13 +40,13 @@ public class ToyStorelmpl implements ToyStorelnt {
     }
 
     @Override
-    public ToyDTO search(String name) throws Exception {
+    public ToyDTO search(String name) throws ToyStoreException.ToyNotFoundException {
         if(verifyExist(name)){
             List<ToyDTO> list = toyStore.stream().filter(toyList-> Objects.equals(toyList.getName(), name))
                     .findFirst().stream().map(ToyMapper::mapFrom).toList();
             return list.getFirst();
         }
-        throw new Exception("Dont found");
+        throw new ToyStoreException.ToyNotFoundException("Could not find");
     }
 
     @Override
@@ -60,18 +61,18 @@ public class ToyStorelmpl implements ToyStorelnt {
     }
 
     @Override
-    public List<ToyDTO> increase(ToyDTO toyStoreDTO, int amount) throws Exception {
+    public List<ToyDTO> increase(ToyDTO toyStoreDTO, int amount) throws ToyStoreException.InvalidQuantityException {
         if(verifyExist(toyStoreDTO.name())){
             toyStore.stream().filter(toy1 -> Objects.equals(toy1.getName(), toyStoreDTO.name()))
                     .peek(toy -> toy.setStock(toy.getStock() + amount))
                     .findFirst();
             FileUtils.saveToys(new File(Constants.PATH_TOYS), toyStore);
             return toyStore.stream().map(ToyMapper::mapFrom).toList();
-        } throw new Exception("The toy is not in the list");
+        } throw new ToyStoreException.InvalidQuantityException("The toy is not in the list");
     }
 
     @Override
-    public List<ToyDTO> decrease(ToyDTO toyStoreDTO, int amount) throws Exception {
+    public List<ToyDTO> decrease(ToyDTO toyStoreDTO, int amount) throws ToyStoreException.InvalidQuantityException {
         Optional<model.Toy> toyOptional = toyStore.stream()
                 .filter(toy -> Objects.equals(toy.getName(), toyStoreDTO.name()))
                 .findFirst();
@@ -80,13 +81,13 @@ public class ToyStorelmpl implements ToyStorelnt {
             model.Toy toy = toyOptional.get();
             int currentStock = toy.getStock();
             if (currentStock < amount) {
-                throw new Exception("No es posible realizar la disminución ya que la cantidad supera el stock disponible");
+                throw new ToyStoreException.InvalidQuantityException("No es posible realizar la disminución ya que la cantidad supera el stock disponible");
             }
             toy.setStock(currentStock - amount);
             FileUtils.saveToys(new File(Constants.PATH_TOYS), toyStore);
             return listToys(); // Devuelve la lista de juguetes actualizada
         } else {
-            throw new Exception("El juguete no está en la lista");
+            throw new ToyStoreException.InvalidQuantityException("El juguete no está en la lista");
         }
     }
 
@@ -119,7 +120,7 @@ public class ToyStorelmpl implements ToyStorelnt {
         }
 
     @Override
-    public List<ToyDTO> showToysAbove(double value) throws Exception {
+    public List<ToyDTO> showToysAbove(double value) throws ToyStoreException.InvalidPriceException {
         if(!toyStore.isEmpty()) {
             List<ToyDTO> storeDTOList = toyStore.stream()
                     .filter(toy -> toy.getPrice() >= value)
@@ -128,7 +129,7 @@ public class ToyStorelmpl implements ToyStorelnt {
                 System.out.println("There is not toys above that price");
             }
             return storeDTOList;
-        } throw new Exception("The list is empty");
+        } throw new ToyStoreException.InvalidPriceException("The list is empty");
     }
 
     @Override

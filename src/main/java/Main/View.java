@@ -1,10 +1,12 @@
 package Main;
 
+import customExceptions.ToyStoreException;
 import mapping.dtos.ToyDTO;
 import model.ToyType;
 import services.ToyStorelmpl;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -39,13 +41,13 @@ public class View {
                         try {
                             System.out.println("Enter the toy name:");
                             String toyName = scanner.nextLine();
-                            System.out.println("Enter the toy type: FEMALE, MALE, or UNISEX");
+                            System.out.println("Enter the toy type: 0.FEMALE, 1.MALE, or  2.UNISEX");
                             ToyType toyType = ToyType.getTypeByValue(Integer.parseInt(scanner.next()));
-                            System.out.println("Enter the quantity of the toy:");
-                            int quantity = scanner.nextInt();
                             System.out.println("Enter the price of the toy:");
-                            double price = scanner.nextDouble();
-                            ToyDTO newToy = new ToyDTO(toyName, toyType, quantity, (int) price);
+                            int stock = scanner.nextInt();
+                            System.out.println("Enter the stock of the toy:");
+                            int price = scanner.nextInt();
+                            ToyDTO newToy = new ToyDTO(toyName, toyType, price, stock);
                             toyStore.addToy(newToy);
                             System.out.println("Toy added successfully.");
                         } catch (Exception e) {
@@ -53,57 +55,52 @@ public class View {
                         }
                         break;
                     case 2:
+                        System.out.println("Enter the name of the toy to search:");
+                        String searchName = scanner.nextLine();
+                        ToyDTO toy;
                         try {
-                            System.out.println("Enter the name of the toy to search:");
-                            String searchName = scanner.nextLine();
-                            ToyDTO toy = toyStore.search(searchName);
+                            toy = toyStore.search(searchName);
                             System.out.println("Toy found: " + toy);
-                        } catch (Exception e) {
+                        } catch (ToyStoreException.ToyNotFoundException e) {
                             System.out.println("Error searching for the toy: " + e.getMessage());
                         }
                         break;
                     case 3:
+                        System.out.println("Enter the name of the toy:");
+                        String toyNameToIncrease = scanner.nextLine();
+                        System.out.println("Enter the quantity to increase:");
+                        int quantityToIncrease = scanner.nextInt();
+                        ToyDTO toyToIncrease = new ToyDTO(toyNameToIncrease, null, 0, 0);
                         try {
-                            System.out.println("Enter the name of the toy:");
-                            String toyNameToIncrease = scanner.nextLine();
-                            System.out.println("Enter the quantity to increase:");
-                            int quantityToIncrease = scanner.nextInt();
-                            ToyDTO toyToIncrease = new ToyDTO(toyNameToIncrease, null, 0, 0);
                             toyStore.increase(toyToIncrease, quantityToIncrease);
                             System.out.println("Quantity of the toy increased successfully.");
-                        } catch (NumberFormatException e) {
-                            System.out.println("Error: Invalid quantity format.");
-                        } catch (Exception e) {
+                        } catch (ToyStoreException.InvalidQuantityException e) {
                             System.out.println("Error increasing the quantity of the toy: " + e.getMessage());
                         }
                         break;
                     case 4:
+                        System.out.println("Enter the name of the toy:");
+                        String toyNameToDecrease = scanner.nextLine();
+                        System.out.println("Enter the quantity to decrease:");
+                        int quantityToDecrease = scanner.nextInt();
+                        ToyDTO toyToDecrease = new ToyDTO(toyNameToDecrease, null, 0, 0);
                         try {
-                            System.out.println("Enter the name of the toy:");
-                            String toyNameToDecrease = scanner.nextLine();
-                            System.out.println("Enter the quantity to decrease:");
-                            int quantityToDecrease = scanner.nextInt();
-                            ToyDTO toyToDecrease = new ToyDTO(toyNameToDecrease, null, 0, 0);
                             toyStore.decrease(toyToDecrease, quantityToDecrease);
                             System.out.println("Quantity of the toy decreased successfully.");
-                        } catch (NumberFormatException e) {
-                            System.out.println("Error: Invalid quantity format.");
-                        } catch (Exception e) {
+                        } catch (ToyStoreException.InvalidQuantityException e) {
                             System.out.println("Error decreasing the quantity of the toy: " + e.getMessage());
                         }
                         break;
                     case 5:
+                        System.out.println("Enter the minimum price:");
+                        double minPrice = scanner.nextDouble();
+                        scanner.nextLine();
                         try {
-                            System.out.println("Enter the minimum price:");
-                            double minPrice = scanner.nextDouble();
-                            scanner.nextLine();
                             System.out.println("Toys above " + minPrice + ":\n");
-                            for (ToyDTO toy : toyStore.showToysAbove(minPrice)) {
-                                System.out.println(toy);
+                            for (ToyDTO toyItem : toyStore.showToysAbove(minPrice)) {
+                                System.out.println(toyItem);
                             }
-                        } catch (NumberFormatException e) {
-                            System.out.println("Error: Invalid price format.");
-                        } catch (Exception e) {
+                        } catch (ToyStoreException.InvalidPriceException e) {
                             System.out.println("Error showing toys above a certain price: " + e.getMessage());
                         }
                         break;
@@ -135,9 +132,28 @@ public class View {
                     }
                     case 8:
                         // Implement showing toy by type
+                        System.out.println(toyStore.showByType());
                         break;
                     case 9:
-                        // Implement listing of toys
+                        CompletableFuture<List<ToyDTO>> future = CompletableFuture.supplyAsync(() -> {
+                            List<ToyDTO> list = toyStore.listToys();
+                            if (!list.isEmpty()) {
+                                for (ToyDTO toys : list) {
+                                    System.out.println(toys);
+                                    System.out.println("Loading...");
+                                    try {
+                                        Thread.sleep(3000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } else {
+                                System.out.println("There are no toys on the list");
+                            }
+                            return list;
+                        });
+                        future.join();
+                        System.out.println("The task is completed");
                         break;
                     case 10:
                         System.out.println("Thank you for visiting the toy store. Goodbye!");
