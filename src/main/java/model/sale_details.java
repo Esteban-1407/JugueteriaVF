@@ -1,2 +1,17 @@
-package model;public class sale_details {
+package model;
+
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@Builder
+public class sale_details {
+    private int id;
+    private sale sale;
+    private toy toy;
+    private int cantidad;
+    private int price;
 }

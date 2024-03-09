@@ -1,4 +1,4 @@
-package repository.implToys;
+package repository;
 
 import java.util.List;
 

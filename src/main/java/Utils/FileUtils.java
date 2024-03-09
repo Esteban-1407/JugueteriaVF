@@ -1,13 +1,13 @@
 package Utils;
 
-import model.Toy;
+import model.toy;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-    public static void saveToys(File file, List<Toy> list){
+    public static void saveToys(File file, List<toy> list){
 
         try{
             FileOutputStream exit = new FileOutputStream(file);
@@ -21,13 +21,13 @@ public class FileUtils {
         }
     }
 
-    public static List<Toy> getToys(File file){
-        List<Toy> toys = new ArrayList<>();
+    public static List<toy> getToys(File file){
+        List<toy> toys = new ArrayList<>();
 
         try {
             FileInputStream fis = new FileInputStream(file);
             ObjectInput ois = new ObjectInputStream(fis);
-            toys = (List<Toy>) ois.readObject();
+            toys = (List<toy>) ois.readObject();
             ois.close();
         } catch (FileNotFoundException e) {
             System.out.println("Archivo no existe");

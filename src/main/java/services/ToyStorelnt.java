@@ -1,23 +1,30 @@
 package services;
 
 import mapping.dtos.ToyDTO;
-import model.ToyType;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 public interface ToyStorelnt {
-    List<ToyDTO> addToy(ToyDTO toyStoreDTO) throws Exception;
+    void addToy(ToyDTO toyDTO);
     List<ToyDTO> listToys();
-    ToyDTO search(String name) throws Exception;
-    Map.Entry<ToyType,Integer> maxToy();
-    Map.Entry<ToyType,Integer> minToy();
-    List<ToyDTO> increase(ToyDTO toyStoreDTO, int amount) throws Exception;
-    List<ToyDTO> decrease(ToyDTO toyStoreDTO, int amount) throws Exception;
-    Map<ToyType,Integer> showByType() throws Exception;
-    Map<ToyType,Integer> sort();
-    List<ToyDTO> showToysAbove(double value) throws Exception;
-    Boolean verifyExist(String name);
-    Integer totalToys() ;
-    Integer totalPriceAllToys();
+    List<ToyDTO> showByType();
+    ToyDTO search(Integer id) throws SQLException;
+
+    int getTotalStock();
+
+    double getTotalValue();
+
+    String getTypeWithMostToys();
+
+    String getTypeWithLeastToys();
+
+
+
+    List<ToyDTO> getToysWithValueGreaterThan(int value);
+
+    List<ToyDTO> orderByStockQuantity();
+
+    void updateStock(int toyId, int quantityChange);
 }

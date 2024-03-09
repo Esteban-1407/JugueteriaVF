@@ -1,9 +1,8 @@
-package services.toyimpl;
+package toyRepository;
 
 import config.DatabaseConnection;
 import model.category;
 import model.toy;
-import services.RepositoryToy;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ public class ToyRepositoryJDBClmpl implements RepositoryToy<toy> {
                 resultSet.getString("category_name")
 
         ));
+        t.setStock(resultSet.getInt("stock"));
         return t;
     }
 
@@ -33,7 +33,7 @@ public class ToyRepositoryJDBClmpl implements RepositoryToy<toy> {
 
     @Override
     public List<toy> list() {
-        List<toy>productosList=new ArrayList<>();
+        List<toy>toysList=new ArrayList<>();
         try(Statement statement=getConnection().createStatement();
             ResultSet resultSet=statement.executeQuery(
                     """
@@ -45,13 +45,13 @@ public class ToyRepositoryJDBClmpl implements RepositoryToy<toy> {
         {
             while (resultSet.next()){
                 toy t = createToy(resultSet);
-                productosList.add(t);
+                toysList.add(t);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return productosList;
+        return toysList;
     }
 
     @Override
@@ -76,13 +76,130 @@ public class ToyRepositoryJDBClmpl implements RepositoryToy<toy> {
         return t;
     }
 
+    @Override
+    public int getTotalStock() {
+        int totalStock = 0;
+        try (Statement statement = getConnection().createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT SUM(stock) AS total_stock FROM toy")) {
+            if (resultSet.next()) {
+                totalStock = resultSet.getInt("total_stock");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalStock;
+    }
+
+    @Override
+    public int getTotalValue() {
+        int totalValue = 0;
+        try (Statement statement = getConnection().createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT SUM(stock * price) AS total_value FROM toy")) {
+            if (resultSet.next()) {
+                totalValue = resultSet.getInt("total_value");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalValue;
+    }
+
+    @Override
+    public String TypeWithMostToys() {
+        String typeWithMostToys = null;
+        try (Statement statement = getConnection().createStatement();
+             ResultSet resultSet = statement.executeQuery(
+                     "SELECT c.type, COUNT(*) AS total_toys " +
+                             "FROM toy AS t " +
+                             "JOIN category AS c ON t.id_category = c.id " +
+                             "GROUP BY c.type " +
+                             "ORDER BY total_toys DESC " +
+                             "LIMIT 1")) {
+            if (resultSet.next()) {
+                typeWithMostToys = resultSet.getString("type");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return typeWithMostToys;
+    }
+
+    @Override
+    public String TypeWithLeastToys() {
+        String typeWithLeastToys = null;
+        try (Statement statement = getConnection().createStatement();
+             ResultSet resultSet = statement.executeQuery(
+                     "SELECT c.type, COUNT(*) AS total_toys " +
+                             "FROM toy AS t " +
+                             "JOIN category AS c ON t.id_category = c.id " +
+                             "GROUP BY c.type " +
+                             "ORDER BY total_toys ASC " +
+                             "LIMIT 1")) {
+            if (resultSet.next()) {
+                typeWithLeastToys = resultSet.getString("type");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return typeWithLeastToys;
+    }
+
+    @Override
+    public List<toy> ToysWithAnValue(int value) {
+
+        List<toy> toysWithValueGreaterThan = new ArrayList<>();
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(
+                "SELECT * FROM toy WHERE price > ?")) {
+            preparedStatement.setInt(1, value);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                toysWithValueGreaterThan.add(createToy(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return toysWithValueGreaterThan;
+    }
+
+    @Override
+    public List<toy> orderByStockQuantity() {
+
+        List<toy> toysOrderedByStockQuantity = new ArrayList<>();
+        try (Statement statement = getConnection().createStatement();
+             ResultSet resultSet = statement.executeQuery(
+                     "SELECT t.*, c.type AS category_name, COUNT(*) AS total_stock " +
+                             "FROM toy AS t " +
+                             "JOIN category AS c ON t.id_category = c.id " +
+                             "GROUP BY c.type " +
+                             "ORDER BY total_stock ASC")) {
+            while (resultSet.next()) {
+                toysOrderedByStockQuantity.add(createToy(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return toysOrderedByStockQuantity;
+    }
+
+    @Override
+    public void updateStock(int toyId, int quantityChange) {
+        try (PreparedStatement preparedStatement = getConnection()
+                .prepareStatement("UPDATE toy SET stock = stock + ? WHERE id = ?")) {
+            preparedStatement.setInt(1, quantityChange);
+            preparedStatement.setInt(2, toyId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
     @Override
     public void save(toy toy) {
         try (PreparedStatement pst = getConnection()
                 .prepareStatement("""
-                                          INSERT INTO toy(name,price,id_category) values (?,?,?)
+                                          INSERT INTO toy(name,price,id_category,stock) values (?,?,?,?)
                                           """)
 
 
@@ -90,6 +207,7 @@ public class ToyRepositoryJDBClmpl implements RepositoryToy<toy> {
             pst.setString(1, toy.getName());
             pst.setDouble(2,toy.getPrice());
             pst.setInt(3,toy.getCategory().getId());
+            pst.setInt(4,toy.getStock());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -141,7 +259,7 @@ public class ToyRepositoryJDBClmpl implements RepositoryToy<toy> {
     public void update(toy toy) {
         try(PreparedStatement preparedStatement = getConnection()
                 .prepareStatement("""
-                                    UPDATE toy SET name = ?, price = ?,  id_category = ? WHERE id = ?;
+                                    UPDATE toy SET name = ?, price = ?,  id_category = ?, stock = ? WHERE id = ?;
                                       """
                 )
         ){
@@ -149,6 +267,7 @@ public class ToyRepositoryJDBClmpl implements RepositoryToy<toy> {
             preparedStatement.setString(2, toy.getName());
             preparedStatement.setDouble(3, toy.getPrice());
             preparedStatement.setInt(4,toy.getCategory().getId());
+            preparedStatement.setInt(5, toy.getStock());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {

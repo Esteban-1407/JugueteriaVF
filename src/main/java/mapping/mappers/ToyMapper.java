@@ -1,11 +1,23 @@
 package mapping.mappers;
 
 import mapping.dtos.ToyDTO;
+import model.toy;
 
 public class ToyMapper {
-    public static model.Toy mapFrom(ToyDTO toyStoreDTO){
-        return new model.Toy(toyStoreDTO.name(),toyStoreDTO.stock(),toyStoreDTO.price(),toyStoreDTO.type());
+    public static ToyDTO mapFromModel(toy toy) {
+        return new ToyDTO(toy.getId(), toy.getName(), toy.getPrice(), toy.getCategory(), toy.getStock());
     }
 
-    public static ToyDTO mapFrom(model.Toy toy){return  new ToyDTO(toy.getName(),toy.getType(),toy.getPrice(),toy.getStock()  );}}
+    public static toy mapFromDTO(ToyDTO dto) {
+        return toy.builder()
+                .id(dto.id())
+                .name(dto.name())
+                .price(dto.price())
+                .category(dto.category())
+                .stock(dto.stock())
+                .build();
+    }
+}
+
+
 

@@ -1,6 +1,7 @@
 package mapping.dtos;
 
-import model.ToyType;
-
-public record ToyDTO(String name, ToyType type, Integer price, Integer stock) {
+import lombok.*;
+import model.category;
+@Builder
+public record ToyDTO(int id, String name, int price, category category, int stock) {
 }
